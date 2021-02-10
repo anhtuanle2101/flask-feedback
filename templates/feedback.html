@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Feedback Form{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class='display-1'>Feedback Form</h1>
+    <form action="/users/{{user.username}}/feedback/add" method='POST'>
+        {{form.hidden_tag()}}
+
+        {% for field in form if field.widget.input_type != 'hidden' %}
+            <div class="form-group">
+                {{field.label}}
+                {{field(_class='form-control')}}
+            </div>
+            {% for error in field.errors %}
+                <div class='text-danger'>{{err}}</div>
+            {% endfor %}
+        {% endfor %}
+        <button class='btn btn-info'>Add</button>
+    </form>
+</div>
+
+{% endblock %}

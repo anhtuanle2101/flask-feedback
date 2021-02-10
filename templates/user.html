@@ -4,7 +4,12 @@
 
 {% block content %}
 <div class="container">
-<h1 class='display-1'>{{user.username}}</h1>
+<h1 class='display-1'>
+    {{user.username}}
+    <form class='d-inline' action="/users/{{user.username}}/delete" method='POST'>
+        <button class="btn btn-sm btn-danger">Delete Account</button>
+    </form>
+</h1>
 <div class="card">
     <ul class="list-group list-group-flush">
         <li class="list-group-item">Email: {{user.email}}</li>
@@ -13,6 +18,17 @@
     </ul>
 </div>
 <h3 class="display-3">Feedback</h3>
+<a href="/users/{{user.username}}/feedback/add" class="btn btn-info">Add a feedback</a>
+<ul class='list-group mt-4'>
+    {% for feedback in feedbacks %}
+    <li class='list-group-item'>
+        <strong>{{feedback.title}}</strong>
+        - {{feedback.content}}
+        <a href="/feedback/{{feedback.id}}/update" class='text-info'>Edit</a>
+        <form class='d-inline ' action="/feedback/{{feedback.id}}/delete" method='POST'><button class='text-danger'>Delete</button> </form>
+    </li>
+    {% endfor %}
+</ul>
 
 </div>
 {% endblock %}
