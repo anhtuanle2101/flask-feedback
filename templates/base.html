@@ -10,10 +10,17 @@
 <body>
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/">Feedback</a>
+        {% if session['user_name'] %}
+        <form action="/logout" method='post'>
+            <button class='btn btn-light'>Logout</button>
+        </form>
+        {% else %}
+        <a href="/login" class="btn btn-light">Login</a>
+        {% endif %}
     </nav>
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% for category, message in messages %}
-            <p>{{category}} - {{message}}</p>
+            <div class='alert alert-{{category}}'>{{message}}</div>
         {% endfor %}
     {% endwith %}
 

@@ -10,3 +10,7 @@ class UserForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired(), Length(min=0, max=30, message='Length is no longer 30 chars')])
     last_name = StringField('Last Name', validators=[InputRequired(), Length(min=0, max=30, message='Length is no longer 30 chars')])
 
+class LoginForm(FlaskForm):
+
+    username = StringField('Username', validators=[InputRequired(), Length(min=0, max=20, message='Length is no longer 20 chars')])
+    password = PasswordField('Password', validators=[InputRequired()])

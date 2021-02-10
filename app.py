@@ -1,8 +1,8 @@
-from flask import Flask, redirect, render_template, flash, request
+from flask import Flask, redirect, render_template, flash, request, session
 from flask_debugtoolbar import DebugToolbarExtension
 from secret import APP_SECRET
-from forms import UserForm
-from models import db, User, connect_db
+from forms import UserForm, LoginForm
+from models import db, User, connect_db, Feedback
 from sqlalchemy.exc import IntegrityError
 
 
@@ -24,6 +24,15 @@ db.create_all()
 def home():
     return redirect('/register')
 
+@app.route('/users/<username>')
+def show_info(username):
+    if 'user_name' in session:
+        user = User.query.filter(User.username == username).first()
+        return render_template('user.html', user=user)
+    else:
+        flash('Please log in first!', 'info')
+        return redirect('/login')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = UserForm()
@@ -41,14 +50,14 @@ def register():
         except IntegrityError:
             form.username.errors = ['Duplicated username']
             return render_template('register.html', form=form)
-        session['user_id'] = user.id
+        session['user_name'] = user.username
         return redirect('/secret')
     else:
         return render_template('register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = UserForm()
+    form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -56,18 +65,17 @@ def login():
         user = User.authenticating(username=username, password=password)
         if user:
             flash('Signed in successfully!', 'info')
-            session['user_id'] = user.id
-            return redirect('/secret')
+            session['user_name'] = user.username
+            return redirect(f'/users/{user.username}')
         else:
             flash('Incorrect Creditials', 'danger')
             return redirect('/login')
     else:
-        flash('asdsa')
         return render_template('login.html', form=form)
 
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user_id')
+    session.pop('user_name')
     flash('Logged out succesfully!', 'info')
-    return redirect('/login')
+    return redirect('/')
     
